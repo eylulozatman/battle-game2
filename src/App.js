@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import Homepage from './homepage'; // Homepage bileşeni
 import PlayerSelection from './playerSelection'; // PlayerSelection bileşeni
 import Combat from './combat'; // Combat bileşeni
