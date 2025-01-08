@@ -80,7 +80,7 @@ const PlayerSelection = ({ playerName, roomId, setPlayerData, navigate }) => {
       setPlayerData(playerData);
 
       const roomRef = doc(db, 'rooms', roomId);
-      const roomSnapshot = await getDoc(roomRef);
+      const roomSnapshot = await getDocs(roomRef);
       const roomData = roomSnapshot.data();
 
       roomData.playersData = roomData.playersData || [];

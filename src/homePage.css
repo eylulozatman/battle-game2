@@ -1,92 +1,138 @@
-/* Genel stil ayarları */
+/* General styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
 }
 
-/* Sayfa arka planı ve metin rengi */
 body {
-  background-color: #1c1c1c;
+  font-family: 'Arial', sans-serif;
+  background-color: #2e1b17;
   color: #f5f5f5;
-  font-size: 16px;
-  line-height: 1.5;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  flex-direction: column;
+  padding: 20px;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #e85a4f;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-/* Başlıklar */
-h2 {
-  font-size: 2rem;
-  color: #ff4c4c; /* Kırmızı tonları */
-  margin-bottom: 20px;
-}
-
-/* Genel konteyner */
+/* Homepage container */
 .homepage-container {
-  background-color: #2a2a2a;
-  border-radius: 10px;
+  background-color: #3e2421;
   padding: 30px;
-  width: 400px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Butonlar */
-button {
-  background-color: #ff4c4c; /* Kırmızı */
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   width: 100%;
-  margin-bottom: 10px;
+  max-width: 400px;
+  text-align: center;
 }
 
-button:disabled {
-  background-color: #b5b5b5;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #ff0000;
-}
-
-/* Giriş alanları */
 input[type="text"] {
-  width: 100%;
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #333;
-  background-color: #3a3a3a;
-  color: white;
+  width: 100%;
+  border: 2px solid #e85a4f;
   border-radius: 5px;
+  background-color: #3e2421;
+  color: #f5f5f5;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
 }
 
 input[type="text"]:focus {
   outline: none;
-  background-color: #444;
-  border-color: #ff4c4c;
+  border-color: #e85a4f;
 }
 
-/* Player sayısı */
-p {
-  font-size: 1.2rem;
+button {
+  background-color: #e85a4f;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  margin: 10px 0;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #d4473a;
+}
+
+button:disabled {
+  background-color: #7a4b48;
+  cursor: not-allowed;
+}
+
+/* Room options section */
+.room-options {
   margin-top: 20px;
-  color: #ff4c4c;
 }
 
-/* Oda ID bilgisi */
-.room-options p {
+.room-options input {
+  width: calc(100% - 24px);
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.room-options button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Player count display */
+p {
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+p span {
+  color: #e85a4f;
+}
+
+/* Start Game Button */
+button.start-game {
+  background-color: #4eaf61;
+  margin-top: 20px;
+}
+
+button.start-game:hover {
+  background-color: #3c8e4d;
+}
+
+/* Room details */
+.room-details {
+  background-color: #4e2a26;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.room-details p {
   font-size: 1rem;
   color: #f5f5f5;
-  margin-top: 10px;
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+  .homepage-container {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  button,
+  input[type="text"] {
+    font-size: 1rem;
+  }
 }

@@ -24,7 +24,7 @@ const Homepage = () => {
     await setDoc(roomRef, {
       playerCount: 1,
       players: [username],
-      playersData: [],
+      playersData: [{ username, userID: Math.random().toString(36).substr(2, 9) }],
     });
   };
 
@@ -68,6 +68,13 @@ const Homepage = () => {
     }
   }, [roomId]);
 
+  useEffect(() => {
+    if (playerCount === 2) {
+      // Redirect both players to the player selection screen when the room has 2 players
+      window.location.href = '/player-selection';
+    }
+  }, [playerCount]);
+
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
   };
@@ -90,7 +97,7 @@ const Homepage = () => {
           Create Room
         </button>
         {roomCreated && (
-          <div>
+          <div className="room-details">
             <p>Room ID: {roomId}</p>
             <p>Share this ID with your friend!</p>
           </div>
@@ -112,7 +119,7 @@ const Homepage = () => {
       <p>Players: {playerCount} / 2</p>
 
       {playerCount === 2 && roomCreator === username && (
-        <button onClick={() => window.location.href = '/player-selection'}>
+        <button className="start-game" onClick={() => window.location.href = '/player-selection'}>
           Start Game
         </button>
       )}
