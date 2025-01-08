@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/battle-game2/static/css/main.91f0398c.css",
+    "main.js": "/battle-game2/static/js/main.6fa386ae.js",
+    "static/js/488.0bcd629f.chunk.js": "/battle-game2/static/js/488.0bcd629f.chunk.js",
+    "index.html": "/battle-game2/index.html",
+    "main.91f0398c.css.map": "/battle-game2/static/css/main.91f0398c.css.map",
+    "main.6fa386ae.js.map": "/battle-game2/static/js/main.6fa386ae.js.map",
+    "488.0bcd629f.chunk.js.map": "/battle-game2/static/js/488.0bcd629f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.91f0398c.css",
+    "static/js/main.6fa386ae.js"
+  ]
+}
