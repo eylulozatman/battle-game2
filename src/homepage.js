@@ -1,41 +1,98 @@
 import React, { useState } from 'react';
-import PlayerSelection from './playerSelection';  // Import PlayerSelection component
-import Login from './login';  // Import Login component
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './homePage.css'
+import { db } from './firebase'; // Firebase bağlantısını import edin
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import './homePage.css';
 
-const HomePage = () => {
-  const [player1Name, setPlayer1Name] = useState(null);  // State for player 1's name
-  const [player2Name, setPlayer2Name] = useState(null);  // State for player 2's name
-  const [player1Data, setPlayer1Data] = useState(null);
-  const [player2Data, setPlayer2Data] = useState(null);
-  const navigate = useNavigate();
+const Homepage = () => {
+  const [username, setUsername] = useState('');
+  const [roomId, setRoomId] = useState('');
+  const [roomCreated, setRoomCreated] = useState(false);
+  const [playerCount, setPlayerCount] = useState(0); // Oda oyuncu sayısını takip eder
+  const [roomIdInput, setRoomIdInput] = useState('');
 
-  const startCombat = () => {
-    if (player1Data && player2Data) {
-      navigate('/combat', { state: { player1: player1Data, player2: player2Data } });
+  // Oda oluşturma fonksiyonu
+  const createRoom = async () => {
+    const newRoomId = Math.floor(Math.random() * 10000) + 1000; // 4 haneli rastgele oda numarası
+    setRoomId(newRoomId);
+    setRoomCreated(true);
+
+    // Firestore'a odanın kaydedilmesi
+    const roomRef = doc(db, 'rooms', newRoomId.toString());
+    await setDoc(roomRef, {
+      playerCount: 1, // Oda ilk başta 1 oyuncu olacak
+      players: [username], // Oyuncu adıyla başla
+    });
+  };
+
+  // Odaya katılma fonksiyonu
+  const enterRoom = async () => {
+    const roomRef = doc(db, 'rooms', roomIdInput);
+    const roomDoc = await getDoc(roomRef);
+
+    if (roomDoc.exists()) {
+      const data = roomDoc.data();
+      if (data.playerCount < 2) {
+        // Odaya yeni oyuncu ekleyebiliriz
+        await setDoc(roomRef, {
+          playerCount: data.playerCount + 1,
+          players: [...data.players, username], // Oyuncu adı eklenir
+        }, { merge: true });
+        setPlayerCount(data.playerCount + 1); // Oyuncu sayısını güncelle
+      } else {
+        alert("Room is full!");
+      }
     } else {
-      alert("Both players must complete their selections.");
+      alert("Room not found!");
     }
   };
 
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleRoomIdInputChange = (e) => {
+    setRoomIdInput(e.target.value);
+  };
+
   return (
-    <div className="home-page-container">
-      {!player1Name ? (
-        <Login setPlayerName={setPlayer1Name} playerNumber={1} />
-      ) : !player2Name ? (
-        <Login setPlayerName={setPlayer2Name} playerNumber={2} />
-      ) : (
-        <div>
-          <PlayerSelection playerName={player1Name} setPlayerData={setPlayer1Data} />
-          <PlayerSelection playerName={player2Name} setPlayerData={setPlayer2Data} />
-          <button onClick={startCombat} className="fight-button">
-            Fight!
-          </button>
-        </div>
+    <div className="homepage-container">
+      <h2>Welcome to the Game</h2>
+      <input
+        type="text"
+        value={username}
+        onChange={handleUsernameChange}
+        placeholder="Enter your username"
+      />
+      <div className="room-options">
+        <button onClick={createRoom} disabled={username === ''}>
+          Create Room
+        </button>
+        {roomCreated && (
+          <div>
+            <p>Room ID: {roomId}</p>
+            <p>Share this ID with your friend!</p>
+          </div>
+        )}
+        <input
+          type="text"
+          value={roomIdInput}
+          onChange={handleRoomIdInputChange}
+          placeholder="Enter Room ID"
+        />
+        <button
+          onClick={enterRoom}
+          disabled={username === '' || roomIdInput === ''}
+        >
+          Enter Room
+        </button>
+      </div>
+      {playerCount === 2 && (
+        <button onClick={() => window.location.href = '/player-selection'}>
+          Start Game
+        </button>
       )}
     </div>
   );
 };
 
-export default HomePage;
+export default Homepage;

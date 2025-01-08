@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import './playerSelection.css';
 
-const PlayerSelection = ({ playerName, setPlayerData }) => {
+const PlayerSelection = ({ playerName, roomId, setPlayerData, navigate }) => {
   const [races, setRaces] = useState([]);
   const [types, setTypes] = useState([]);
   const [weapons, setWeapons] = useState([]);
   const [selectedRaceIndex, setSelectedRaceIndex] = useState(0);
   const [selectedTypeIndex, setSelectedTypeIndex] = useState(0);
   const [selectedWeapon, setSelectedWeapon] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // Fetch races, weapons, and types from Firebase
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Get races
         const raceSnapshot = await getDocs(collection(db, 'races'));
         const racesData = raceSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -21,6 +24,7 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
         }));
         setRaces(racesData);
 
+        // Get weapons
         const weaponSnapshot = await getDocs(collection(db, 'weapons'));
         const weaponsData = weaponSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -34,6 +38,7 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
     fetchData();
   }, []);
 
+  // Fetch types based on the selected race
   useEffect(() => {
     const fetchTypes = async () => {
       if (races.length > 0) {
@@ -56,6 +61,7 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
     fetchTypes();
   }, [selectedRaceIndex, races]);
 
+  // Handle race selection
   const handlePrevRace = () => {
     setSelectedRaceIndex((prevIndex) => (prevIndex - 1 + races.length) % races.length);
   };
@@ -64,6 +70,7 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
     setSelectedRaceIndex((prevIndex) => (prevIndex + 1) % races.length);
   };
 
+  // Handle type selection
   const handlePrevType = () => {
     setSelectedTypeIndex((prevIndex) => (prevIndex - 1 + types.length) % types.length);
   };
@@ -72,24 +79,52 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
     setSelectedTypeIndex((prevIndex) => (prevIndex + 1) % types.length);
   };
 
-  const handleSubmit = () => {
+  // Handle weapon selection
+  const handleWeaponSelect = (weapon) => {
+    setSelectedWeapon(weapon);
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
     if (types.length > 0 && selectedWeapon) {
-      setPlayerData({
+      const playerData = {
         name: playerName,
         race: races[selectedRaceIndex],
         type: types[selectedTypeIndex],
         weapon: selectedWeapon,
-        hp: types[selectedTypeIndex].hp  // Assuming hp is a property of type
-      });
-      alert(`${playerName} is ready for combat!`);
+        hp: types[selectedTypeIndex].hp, // Assuming hp is a property of type
+      };
+
+      setPlayerData(playerData);
+
+      // Save player data to Firebase
+      const roomRef = doc(db, 'rooms', roomId);
+      const roomSnapshot = await getDocs(roomRef);
+      const roomData = roomSnapshot.data();
+
+      if (roomData.players.length < 2) {
+        roomData.players.push(playerName);
+        await setDoc(roomRef, roomData);
+      }
+
+      // Wait for both players to submit their data
+      setIsSubmitted(true);
+
+      // After 2 seconds, navigate to combat
+      setTimeout(() => {
+        navigate(`/combat/${roomId}`);
+      }, 2000);
+    } else {
+      alert('Please select race, type, and weapon!');
     }
   };
 
   return (
     <div className="player-container">
       <h2>{playerName}</h2>
-  
+
       <div className="selection-container">
+        {/* Race Selection */}
         <div className="selection-section">
           <h3>Select Race</h3>
           {races.length > 0 ? (
@@ -106,7 +141,8 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
             <p>Loading races...</p>
           )}
         </div>
-  
+
+        {/* Type Selection */}
         <div className="selection-section">
           <h3>Select Type</h3>
           {types.length > 0 ? (
@@ -132,7 +168,8 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
             <p>No types available for this race</p>
           )}
         </div>
-  
+
+        {/* Weapon Selection */}
         <div className="selection-section">
           <h3>Select Weapon</h3>
           {weapons.length > 0 ? (
@@ -140,7 +177,7 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
               {weapons.map((weapon) => (
                 <div key={weapon.id} className="weapon-card">
                   <button
-                    onClick={() => setSelectedWeapon(weapon)}
+                    onClick={() => handleWeaponSelect(weapon)}
                     className={`weapon-button ${selectedWeapon?.id === weapon.id ? 'selected' : ''}`}
                   >
                     {weapon.name}
@@ -157,17 +194,14 @@ const PlayerSelection = ({ playerName, setPlayerData }) => {
           )}
         </div>
       </div>
-  
+
       <div className="submit-button-container">
-        <button onClick={handleSubmit} className="submit-button">
-          Submit
+        <button onClick={handleSubmit} className="submit-button" disabled={isSubmitted}>
+          {isSubmitted ? 'Waiting for Other Player...' : 'Submit'}
         </button>
       </div>
     </div>
   );
-  
-  
-  
 };
 
 export default PlayerSelection;

@@ -1,143 +1,109 @@
-/* Global Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* General styles */
+.player-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.selection-container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.selection-section {
+  margin-bottom: 20px;
+}
+
+.selection-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.type-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.type-card {
+  text-align: center;
+  margin: 0 10px;
+}
+
+.type-photo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+.weapon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.weapon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.weapon-button {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.weapon-button.selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.weapon-details {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .selection-container {
+    padding: 10px;
   }
-  
-  body {
-    background-color: #1c1c1c; /* Koyu arka plan */
-    color: #fff;
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
-  }
-  
-  /* Player Container */
-  .player-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #222; /* Koyu arka plan */
-    border-radius: 8px;
-  }
-  
-  /* Section */
-  .selection-section {
-    background-color: #333;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 2px;
-  }
-  
-  h3 {
-    font-size: 18px;
-    color: #f44336; /* Kırmızı başlık */
-    margin-bottom: 10px;
-  }
-  
-  /* Buttons */
-  .icon-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px;
-    border-radius: 5%;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .icon-button:hover {
-    background-color: #d32f2f;
-  }
-  
-  /* Selection Text */
-  .selection-buttons span {
-    font-size: 18px;
-    color: #fff;
-    margin: 0 10px;
-  }
-  
-  /* Type Card */
-  .type-card {
-    background-color: #444;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .type-card h4 {
-    color: #fff;
-    margin-bottom: 10px;
-  }
-  
-  .type-photo {
-    width: 100%;
-    height: 100%;
-    max-height: 150px; /* Sabit yükseklik */
-    object-fit: contain; /* Resmin orantılı sığmasını sağlar */
-    border-radius: 8px;
-    margin-top: 10px;
-  }
-  
-  /* Weapon Grid */
+
   .weapon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
+    flex-direction: column;
   }
-  
-  .weapon-card {
-    background-color: #444;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .weapon-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px;
-    width: 100%;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-  }
-  
-  .weapon-button:hover {
-    background-color: #d32f2f;
-  }
-  
-  .weapon-button.selected {
-    background-color: #e91e63;
-  }
-  
-  .weapon-details {
-    color: #ccc;
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  /* Submit Button */
-  .submit-button-container {
-    text-align: center;
-  }
-  
-  .submit-button {
-    background-color: #f44336;
-    color: white;
-    padding: 10px 20px;
-    width: 100%;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .submit-button:hover {
-    background-color: #d32f2f;
-  }
-  
+}

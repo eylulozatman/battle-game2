@@ -44,6 +44,7 @@ const Combat = () => {
       setGameStatus("Player 2 activates Shield! Next attack will be blocked by 30%.");
     }
   };
+
   const attack = (attacker) => {
     let defender;
     let attackerWeapon;
