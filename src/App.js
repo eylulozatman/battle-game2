@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';  // Ensure Navigate is imported
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // HashRouter'ı kullanıyoruz
 import HomePage from './homepage';
 import Combat from './combat';
 
@@ -9,7 +9,7 @@ const App = () => {
       <Routes>
         <Route path="/homepage" element={<HomePage />} />
         <Route path="/combat" element={<Combat />} />
-        <Route path="/" element={<Navigate to="/homepage" />} />  {/* Fix for 'Navigate' is not defined */}
+        <Route path="/" element={<Navigate to="/homepage" />} />
       </Routes>
     </Router>
   );
