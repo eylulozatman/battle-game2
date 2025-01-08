@@ -104,6 +104,9 @@ const Homepage = () => {
         </button>
       </div>
 
+      {/* Oyuncu sayısını kesirli göster */}
+      <p>Players: {playerCount} / 2</p>
+
       {/* Eğer oda dolmuşsa ve odayı oluşturan kişiyse, Start Game butonunu göster */}
       {playerCount === 2 && roomCreator === username && (
         <button onClick={() => window.location.href = '/player-selection'}>
