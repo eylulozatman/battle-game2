@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import './homePage.css';
 
 const Homepage = () => {
@@ -9,17 +9,14 @@ const Homepage = () => {
   const [roomCreated, setRoomCreated] = useState(false);
   const [playerCount, setPlayerCount] = useState(0);
   const [roomIdInput, setRoomIdInput] = useState('');
-  const [roomCreator, setRoomCreator] = useState(null);
   const [userID, setUserID] = useState('');
+  const [isRoomFull, setIsRoomFull] = useState(false);
 
-  // Oda oluşturma fonksiyonu
   const createRoom = async () => {
-    const newRoomId = Math.floor(Math.random() * 10000) + 1000; 
+    const newRoomId = Math.floor(Math.random() * 10000) + 1000; // Generate random room ID
     setRoomId(newRoomId);
     setRoomCreated(true);
-    setRoomCreator(username);
 
-    // Firebase'e oda kaydedilmesi
     const roomRef = doc(db, 'rooms', newRoomId.toString());
     await setDoc(roomRef, {
       playerCount: 1,
@@ -28,7 +25,6 @@ const Homepage = () => {
     });
   };
 
-  // Odaya katılma fonksiyonu
   const enterRoom = async () => {
     const roomRef = doc(db, 'rooms', roomIdInput);
     const roomDoc = await getDoc(roomRef);
@@ -36,16 +32,18 @@ const Homepage = () => {
     if (roomDoc.exists()) {
       const data = roomDoc.data();
       if (data.playerCount < 2) {
-        // Odaya yeni oyuncu ekleme
-        const newUserID = Math.random().toString(36).substr(2, 9); // Generate a unique ID
+        const newUserID = Math.random().toString(36).substr(2, 9);
         setUserID(newUserID);
-        await setDoc(roomRef, {
-          playerCount: data.playerCount + 1,
-          players: [...data.players, username],
-          playersData: [...data.playersData, { username, userID: newUserID }],
-        }, { merge: true });
 
-        setPlayerCount(data.playerCount + 1);
+        await setDoc(
+          roomRef,
+          {
+            playerCount: data.playerCount + 1,
+            players: [...data.players, username],
+            playersData: [...data.playersData, { username, userID: newUserID }],
+          },
+          { merge: true }
+        );
       } else {
         alert('Room is full!');
       }
@@ -55,25 +53,25 @@ const Homepage = () => {
   };
 
   useEffect(() => {
-    if (roomId) {
-      const roomRef = doc(db, 'rooms', roomId.toString());
-      const fetchRoomData = async () => {
-        const roomDoc = await getDoc(roomRef);
+    if (roomId || roomIdInput) {
+      const roomRef = doc(db, 'rooms', (roomId || roomIdInput).toString());
+      const unsubscribe = onSnapshot(roomRef, (roomDoc) => {
         if (roomDoc.exists()) {
           const data = roomDoc.data();
           setPlayerCount(data.playerCount);
+          setIsRoomFull(data.playerCount === 2);
         }
-      };
-      fetchRoomData();
+      });
+
+      return () => unsubscribe();
     }
-  }, [roomId]);
+  }, [roomId, roomIdInput]);
 
   useEffect(() => {
-    if (playerCount === 2) {
-      // Redirect both players to the player selection screen when the room has 2 players
-      window.location.href = '/player-selection';
+    if (isRoomFull) {
+      window.location.href = `/player-selection?roomId=${roomId || roomIdInput}`;
     }
-  }, [playerCount]);
+  }, [isRoomFull, roomId, roomIdInput]);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -117,12 +115,6 @@ const Homepage = () => {
       </div>
 
       <p>Players: {playerCount} / 2</p>
-
-      {playerCount === 2 && roomCreator === username && (
-        <button className="start-game" onClick={() => window.location.href = '/player-selection'}>
-          Start Game
-        </button>
-      )}
     </div>
   );
 };
