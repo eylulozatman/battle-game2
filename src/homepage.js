@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from './firebase'; // Firebase bağlantısını import edin
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import './homePage.css';
@@ -9,12 +9,14 @@ const Homepage = () => {
   const [roomCreated, setRoomCreated] = useState(false);
   const [playerCount, setPlayerCount] = useState(0); // Oda oyuncu sayısını takip eder
   const [roomIdInput, setRoomIdInput] = useState('');
+  const [roomCreator, setRoomCreator] = useState(null); // Odayı oluşturan oyuncu
 
   // Oda oluşturma fonksiyonu
   const createRoom = async () => {
     const newRoomId = Math.floor(Math.random() * 10000) + 1000; // 4 haneli rastgele oda numarası
     setRoomId(newRoomId);
     setRoomCreated(true);
+    setRoomCreator(username); // Odayı oluşturan kişiyi kaydediyoruz
 
     // Firestore'a odanın kaydedilmesi
     const roomRef = doc(db, 'rooms', newRoomId.toString());
@@ -45,6 +47,21 @@ const Homepage = () => {
       alert("Room not found!");
     }
   };
+
+  // Oda bilgisini güncelleme
+  useEffect(() => {
+    if (roomId) {
+      const roomRef = doc(db, 'rooms', roomId.toString());
+      const fetchRoomData = async () => {
+        const roomDoc = await getDoc(roomRef);
+        if (roomDoc.exists()) {
+          const data = roomDoc.data();
+          setPlayerCount(data.playerCount);
+        }
+      };
+      fetchRoomData();
+    }
+  }, [roomId]);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -86,7 +103,9 @@ const Homepage = () => {
           Enter Room
         </button>
       </div>
-      {playerCount === 2 && (
+
+      {/* Eğer oda dolmuşsa ve odayı oluşturan kişiyse, Start Game butonunu göster */}
+      {playerCount === 2 && roomCreator === username && (
         <button onClick={() => window.location.href = '/player-selection'}>
           Start Game
         </button>

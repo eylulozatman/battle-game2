@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, doc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import './playerSelection.css';
 
@@ -11,6 +11,7 @@ const PlayerSelection = ({ playerName, roomId, setPlayerData, navigate }) => {
   const [selectedTypeIndex, setSelectedTypeIndex] = useState(0);
   const [selectedWeapon, setSelectedWeapon] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [playersData, setPlayersData] = useState([]);
 
   // Fetch races, weapons, and types from Firebase
   useEffect(() => {
@@ -93,6 +94,7 @@ const PlayerSelection = ({ playerName, roomId, setPlayerData, navigate }) => {
         type: types[selectedTypeIndex],
         weapon: selectedWeapon,
         hp: types[selectedTypeIndex].hp, // Assuming hp is a property of type
+        submitted: true // Mark as submitted
       };
 
       setPlayerData(playerData);
@@ -102,18 +104,27 @@ const PlayerSelection = ({ playerName, roomId, setPlayerData, navigate }) => {
       const roomSnapshot = await getDocs(roomRef);
       const roomData = roomSnapshot.data();
 
-      if (roomData.players.length < 2) {
-        roomData.players.push(playerName);
-        await setDoc(roomRef, roomData);
-      }
+      // Update player data in the room document
+      roomData.playersData = roomData.playersData || [];
+      roomData.playersData.push(playerData);
 
-      // Wait for both players to submit their data
+      // Update the room with the new player data
+      await updateDoc(roomRef, {
+        playersData: roomData.playersData
+      });
+
+      // Set the submission state
       setIsSubmitted(true);
 
-      // After 2 seconds, navigate to combat
-      setTimeout(() => {
-        navigate(`/combat/${roomId}`);
-      }, 2000);
+      // Check if both players have submitted, then navigate to combat
+      const allPlayersSubmitted = roomData.playersData.filter(player => player.submitted).length === 2;
+
+      if (allPlayersSubmitted) {
+        // After a short delay, navigate to combat page
+        setTimeout(() => {
+          navigate(`/combat/${roomId}`);
+        }, 2000);
+      }
     } else {
       alert('Please select race, type, and weapon!');
     }
