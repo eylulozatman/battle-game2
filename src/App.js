@@ -1,18 +1,22 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // HashRouter'ı kullanıyoruz
-import HomePage from './homepage';
-import Combat from './combat';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Homepage from './homepage'; // Homepage bileşeni
+import PlayerSelection from './playerSelection'; // PlayerSelection bileşeni
+import Combat from './combat'; // Combat bileşeni
 
-const App = () => {
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/homepage" element={<HomePage />} />
-        <Route path="/combat" element={<Combat />} />
-        <Route path="/" element={<Navigate to="/homepage" />} />
+        {/* Ana sayfa */}
+        <Route path="/" element={<Homepage />} />
+        {/* Player Selection sayfası */}
+        <Route path="/player-selection" element={<PlayerSelection />} />
+        {/* Combat sayfası */}
+        <Route path="/combat/:roomId" element={<Combat />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;
