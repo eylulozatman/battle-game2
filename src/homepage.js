@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase'; // Firebase bağlantısını import edin
+import { db } from './firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import './homePage.css';
 
@@ -7,22 +7,24 @@ const Homepage = () => {
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
   const [roomCreated, setRoomCreated] = useState(false);
-  const [playerCount, setPlayerCount] = useState(0); // Oda oyuncu sayısını takip eder
+  const [playerCount, setPlayerCount] = useState(0);
   const [roomIdInput, setRoomIdInput] = useState('');
-  const [roomCreator, setRoomCreator] = useState(null); // Odayı oluşturan oyuncu
+  const [roomCreator, setRoomCreator] = useState(null);
+  const [userID, setUserID] = useState('');
 
   // Oda oluşturma fonksiyonu
   const createRoom = async () => {
-    const newRoomId = Math.floor(Math.random() * 10000) + 1000; // 4 haneli rastgele oda numarası
+    const newRoomId = Math.floor(Math.random() * 10000) + 1000; 
     setRoomId(newRoomId);
     setRoomCreated(true);
-    setRoomCreator(username); // Odayı oluşturan kişiyi kaydediyoruz
+    setRoomCreator(username);
 
-    // Firestore'a odanın kaydedilmesi
+    // Firebase'e oda kaydedilmesi
     const roomRef = doc(db, 'rooms', newRoomId.toString());
     await setDoc(roomRef, {
-      playerCount: 1, // Oda ilk başta 1 oyuncu olacak
-      players: [username], // Oyuncu adıyla başla
+      playerCount: 1,
+      players: [username],
+      playersData: [],
     });
   };
 
@@ -34,21 +36,24 @@ const Homepage = () => {
     if (roomDoc.exists()) {
       const data = roomDoc.data();
       if (data.playerCount < 2) {
-        // Odaya yeni oyuncu ekleyebiliriz
+        // Odaya yeni oyuncu ekleme
+        const newUserID = Math.random().toString(36).substr(2, 9); // Generate a unique ID
+        setUserID(newUserID);
         await setDoc(roomRef, {
           playerCount: data.playerCount + 1,
-          players: [...data.players, username], // Oyuncu adı eklenir
+          players: [...data.players, username],
+          playersData: [...data.playersData, { username, userID: newUserID }],
         }, { merge: true });
-        setPlayerCount(data.playerCount + 1); // Oyuncu sayısını güncelle
+
+        setPlayerCount(data.playerCount + 1);
       } else {
-        alert("Room is full!");
+        alert('Room is full!');
       }
     } else {
-      alert("Room not found!");
+      alert('Room not found!');
     }
   };
 
-  // Oda bilgisini güncelleme
   useEffect(() => {
     if (roomId) {
       const roomRef = doc(db, 'rooms', roomId.toString());
@@ -104,10 +109,8 @@ const Homepage = () => {
         </button>
       </div>
 
-      {/* Oyuncu sayısını kesirli göster */}
       <p>Players: {playerCount} / 2</p>
 
-      {/* Eğer oda dolmuşsa ve odayı oluşturan kişiyse, Start Game butonunu göster */}
       {playerCount === 2 && roomCreator === username && (
         <button onClick={() => window.location.href = '/player-selection'}>
           Start Game
