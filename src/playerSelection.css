@@ -1,95 +1,143 @@
-/* General styles */
+/* playerSelection.css */
+
+/* Genel sayfa düzeni */
 .player-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-.selection-container {
-  width: 100%;
-  max-width: 600px;
-}
-
-.selection-section {
+h2 {
   margin-bottom: 20px;
+  color: #333;
+}
+
+/* Seçim alanı düzeni */
+.selection-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Her seçim bölümünün düzeni */
+.selection-section {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.selection-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Butonlar için düzen */
+.icon-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+  background-color: #0056b3;
 }
 
 .selection-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 20px;
   align-items: center;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
 }
 
 .type-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 
 .type-card {
-  text-align: center;
-  margin: 0 10px;
-}
-
-.type-photo {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-top: 10px;
-}
-
-.weapon-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.weapon-card {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.weapon-button {
-  padding: 10px;
-  margin: 5px;
-  border: 1px solid #ccc;
+.type-photo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+/* Silah seçimi için düzen */
+.weapon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.weapon-card {
   background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.weapon-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.weapon-button:hover {
+  background-color: #218838;
+}
+
+.weapon-button.selected {
+  background-color: #dc3545;
+}
+
+.weapon-details {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Submit butonu ve bekleme durumu */
+.submit-button-container {
+  margin-top: 30px;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.weapon-button.selected {
-  background-color: #4caf50;
-  color: white;
-}
-
-.weapon-details {
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.submit-button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.submit-button {
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1rem;
+.submit-button:hover {
+  background-color: #0056b3;
 }
 
 .submit-button:disabled {
@@ -97,13 +145,19 @@
   cursor: not-allowed;
 }
 
-/* Responsive styles */
+/* Mobil uyumluluk için responsive */
 @media (max-width: 768px) {
   .selection-container {
-    padding: 10px;
+    width: 90%;
   }
 
   .weapon-grid {
-    flex-direction: column;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .weapon-grid {
+    grid-template-columns: 1fr;
   }
 }
